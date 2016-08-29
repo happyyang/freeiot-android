@@ -8,7 +8,6 @@ import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.json.JSONException;
 import org.json.JSONStringer;
-import org.json.JSONTokener;
 
 import android.content.Context;
 import android.text.TextUtils;

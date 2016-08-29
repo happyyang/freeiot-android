@@ -92,6 +92,8 @@ public class DevicesApi extends AbsOpenApi {
     public static void deviceList(Context context, String accessToken, AsyncHttpResponseHandler responseHandler) {
         List<Header> headerList = new ArrayList<Header>();
         headerList.add(new BasicHeader(ApiKey.HeadKey.ACCESS_TOKEN, accessToken));
+        // gile add
+        headerList.add(new BasicHeader("App-Key", "b923952a29e0126d10bb424e741d71cd72879e8220f3f77e670d7133daaa5cec"));
         get(context, getApiServerUrl() + DEVICE_LIST, headerList, null, responseHandler);
     }
 
@@ -106,6 +108,8 @@ public class DevicesApi extends AbsOpenApi {
     public static void deviceInfo(Context context, String accessToken, String identifier, AsyncHttpResponseHandler responseHandler) {
         List<Header> headerList = new ArrayList<Header>();
         headerList.add(new BasicHeader(ApiKey.HeadKey.ACCESS_TOKEN, accessToken));
+        // gile add
+        headerList.add(new BasicHeader("App-Key", "b923952a29e0126d10bb424e741d71cd72879e8220f3f77e670d7133daaa5cec"));
         get(context,  String.format(getApiServerUrl() + DEVICE_INFO, identifier), headerList, null, responseHandler);
     }
 
@@ -124,6 +128,8 @@ public class DevicesApi extends AbsOpenApi {
                    String deviceName, int secureLevel, AsyncHttpResponseHandler responseHandler) {
         List<Header> headerList = new ArrayList<Header>();
         headerList.add(new BasicHeader(ApiKey.HeadKey.ACCESS_TOKEN, accessToken));
+     // gile add
+        headerList.add(new BasicHeader("App-Key", "b923952a29e0126d10bb424e741d71cd72879e8220f3f77e670d7133daaa5cec"));
 
         try {
             String jsonParams = new JSONStringer()
@@ -206,6 +212,8 @@ public class DevicesApi extends AbsOpenApi {
 		}
 	}
 
+	
+	
     /**
      * get all authorized devices information(/v1/devices/{identifier}/permissions)
      * <p>Method: get</p>
@@ -251,6 +259,8 @@ public class DevicesApi extends AbsOpenApi {
         List<Header> headerList = new ArrayList<Header>();
         headerList.add(new BasicHeader(ApiKey.HeadKey.PRODUCT_KEY, productKey));
         headerList.add(new BasicHeader(ApiKey.HeadKey.ACCESS_TOKEN, accessToken));
+     // gile add
+        headerList.add(new BasicHeader("App-Key", "b923952a29e0126d10bb424e741d71cd72879e8220f3f77e670d7133daaa5cec"));
         try {
             String jsonParams = new JSONStringer()
                     .object()
@@ -285,6 +295,8 @@ public class DevicesApi extends AbsOpenApi {
                    int permissionId, int privilege,AsyncHttpResponseHandler responseHandler) {
         List<Header> headerList = new ArrayList<Header>();
         headerList.add(new BasicHeader(ApiKey.HeadKey.ACCESS_TOKEN, accessToken));
+     // gile add
+        headerList.add(new BasicHeader("App-Key", "b923952a29e0126d10bb424e741d71cd72879e8220f3f77e670d7133daaa5cec"));
         try {
             String jsonParams = new JSONStringer()
                     .object()
@@ -316,11 +328,16 @@ public class DevicesApi extends AbsOpenApi {
 			String identifier, String jsonBody, AsyncHttpResponseHandler responseHandler) {
 		List<Header> headerList = new ArrayList<Header>();
 		headerList.add(new BasicHeader(ApiKey.HeadKey.ACCESS_TOKEN, accessToken));
+		// gile add
+		headerList.add(new BasicHeader("App-Key", "b923952a29e0126d10bb424e741d71cd72879e8220f3f77e670d7133daaa5cec"));
 		try {
 			if (DEBUG) {
 				LogUtils.d(jsonBody);
 			}
-			post(context,
+//			post(context,
+//                    String.format(getApiServerUrl() + DEVICE_SEND_COMMANDS, identifier)
+//                    , headerList, jsonBody, responseHandler);
+			put(context,
                     String.format(getApiServerUrl() + DEVICE_SEND_COMMANDS, identifier)
                     , headerList, jsonBody, responseHandler);
 		}  catch (UnsupportedEncodingException e) {
@@ -340,7 +357,8 @@ public class DevicesApi extends AbsOpenApi {
                String identifier, AsyncHttpResponseHandler responseHandler) {
         List<Header> headerList = new ArrayList<Header>();
         headerList.add(new BasicHeader(ApiKey.HeadKey.ACCESS_TOKEN, accessToken));
-
+     // gile add
+        headerList.add(new BasicHeader("App-Key", "b923952a29e0126d10bb424e741d71cd72879e8220f3f77e670d7133daaa5cec"));
         get(context,
                 String.format(getApiServerUrl() + DEVICE_CURRENT_STATUS, identifier),
                 headerList, null, responseHandler);
@@ -358,7 +376,8 @@ public class DevicesApi extends AbsOpenApi {
     {
         List<Header> headerList = new ArrayList<Header>();
         headerList.add(new BasicHeader(ApiKey.HeadKey.ACCESS_TOKEN, accessToken));
-
+     // gile add
+        headerList.add(new BasicHeader("App-Key", "b923952a29e0126d10bb424e741d71cd72879e8220f3f77e670d7133daaa5cec"));
         try
         {
             put(context, String.format(getApiServerUrl() + DEVICE_SET_CURRENT_STATUS, identifier),

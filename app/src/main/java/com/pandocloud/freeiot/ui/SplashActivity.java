@@ -8,7 +8,6 @@ import com.pandocloud.freeiot.R;
 import com.pandocloud.freeiot.ui.app.UserState;
 import com.pandocloud.freeiot.ui.base.BaseActivity;
 import com.pandocloud.freeiot.ui.helper.ProductInfoHelper;
-import com.pandocloud.freeiot.ui.login.EmailLoginActivity;
 import com.pandocloud.freeiot.ui.login.LoginActivity;
 import com.pandocloud.freeiot.utils.ActivityUtils;
 import com.pandocloud.freeiot.utils.AnalyticsUtils;

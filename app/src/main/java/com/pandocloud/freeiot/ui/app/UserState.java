@@ -10,13 +10,13 @@ public class UserState {
 	
 	private static final String USER_PREFS_NAME = "pando_user_prefs";
 	
-	private SharedPreferences mPrefs;
+	private static SharedPreferences mPrefs;
 	
 	private String accessToken;
 	
 	private static UserState sInstances;
 	
-	private void init(Context context) {
+	private static void init(Context context) {
 		if (mPrefs == null) {
 			mPrefs = context.getApplicationContext()
 					.getSharedPreferences(USER_PREFS_NAME, Context.MODE_MULTI_PROCESS);
@@ -28,6 +28,11 @@ public class UserState {
 	}
 	
 	public static UserState getInstances(Context context) {
+		/**
+		 * gile add  to make is true ,jump directly to {@link com.pandocloud.freeiot.ui.home.MyDevicesListFragment.class}
+		 */
+		init(context);
+		saveAccessToken2("b923952a29e0126d10bb424e741d71cd72879e8220f3f77e670d7133daaa5cec");
 		if (sInstances == null) {
 			synchronized (UserState.class) {
 				if (sInstances == null) {
@@ -42,7 +47,9 @@ public class UserState {
 		this.accessToken = value;
 		mPrefs.edit().putString("accessToken", value).commit();
 	}
-	
+	public static void saveAccessToken2(String value) {
+		mPrefs.edit().putString("accessToken", value).commit();
+	}
 	public String getAccessToken(String defValue) {
 		if (TextUtils.isEmpty(accessToken)) {
 			accessToken = mPrefs.getString("accessToken", defValue);

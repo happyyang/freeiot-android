@@ -104,6 +104,10 @@
             android:name="com.umeng.update.UpdateDialogActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" >
         </activity>
+        <activity
+            android:name=".ui.device.TestDeviceActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+        </activity>
 
         <meta-data android:name="UMENG_APPKEY" android:value="55707afd67e58efb7a001e21"/>
         <meta-data android:name="UMENG_CHANNEL" android:value="baidu" />

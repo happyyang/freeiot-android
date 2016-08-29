@@ -86,5 +86,28 @@
     <string name="http_error_message">Network request an exception,verify the network connection is working and try again</string>
     <string name="http_server_error">Server seemed deserted, please try again later</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
+    <string name="app_name1">AndroidSdk</string>
+    <string name="dateFormat">dd/MM/yy \'at\' HH:mm:ss</string>
+    <string name="timestamp">&lt;br/&gt; &lt;small&gt; %1$s &lt;/small&gt;</string>
+    <string name="connectedto">Connected to </string>
+    <string name="disconnected">Disconnected from</string>
+    <string name="no_status">Unknown connection status to</string>
+    <string name="connecting">Connecting to</string>
+    <string name="disconnecting">Disconnecting from</string>
+    <string name="connectionError">An error occurred connecting to</string>
+    <string name="connection_lost">%1$s has lost connection to %2$s</string>
+    <string name="messageRecieved">Received message %1$s &lt;br/&gt; &lt;small&gt;Topic: %2$s &lt;/small&gt; </string>
+    <string name="notifyTitle">MQTT Message Received</string>
+    <string name="notifyTitle_connectionLost">MQTT Client Has Lost Connection</string>
+    <string name="notification">%1$s has received %2$s on topic %3$s</string>
+    <string name="toast_pub_success">Published message: %1$s to topic: %2$s</string>
+    <string name="toast_sub_success">Subscribed to %1$s</string>
+    <string name="toast_disconnected">Disconnected</string>
+    <string name="toast_pub_failed">Failed to publish message: %1$s to topic: %2$s</string>
+    <string name="toast_sub_failed">Failed to subscribe to %1$s</string>
+    <string name="title_activity_test_device">TestDeviceActivity</string>
+    <string name="btn_control_open">控制   打开</string>
+    <string name="btn_control_close">控制   关闭</string>
+<string name="btn_control_color">控制   颜色</string>
+<string name="btn_back">返回</string>
 </resources>

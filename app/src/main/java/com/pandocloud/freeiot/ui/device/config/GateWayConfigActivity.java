@@ -12,7 +12,6 @@ import com.umeng.analytics.MobclickAgent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.view.MenuItem;
 import android.view.WindowManager;
 
 public class GateWayConfigActivity extends BaseActivity {

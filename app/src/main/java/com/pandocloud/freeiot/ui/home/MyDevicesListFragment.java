@@ -1,5 +1,13 @@
 package com.pandocloud.freeiot.ui.home;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+
+import org.apache.http.Header;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -9,9 +17,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.app.Fragment;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -40,6 +48,7 @@ import com.pandocloud.freeiot.ui.bean.http.DevicesResponse;
 import com.pandocloud.freeiot.ui.db.DBManager;
 import com.pandocloud.freeiot.ui.device.DeviceAuthActivity;
 import com.pandocloud.freeiot.ui.device.DeviceControlActivity;
+import com.pandocloud.freeiot.ui.device.TestDeviceActivity;
 import com.pandocloud.freeiot.ui.device.DeviceInfoModifyActivity;
 import com.pandocloud.freeiot.ui.device.DevicePermissionsListActivity;
 import com.pandocloud.freeiot.utils.ActivityUtils;
@@ -51,13 +60,6 @@ import com.pandocloud.freeiot.utils.GsonUtils;
 import com.pandocloud.freeiot.utils.LogUtils;
 import com.pandocloud.freeiot.utils.UIUtils;
 import com.umeng.update.UmengUpdateAgent;
-
-import org.apache.http.Header;
-
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
 
 
 public class MyDevicesListFragment extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
@@ -85,15 +87,15 @@ public class MyDevicesListFragment extends Fragment implements View.OnClickListe
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
         mSwipeRefreshLayout.setColorScheme(R.color.main_red_color);
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.setProgressViewOffset(true, 0, UIUtils.dip2px(getActivity(), 48));
+//        mSwipeRefreshLayout.setProgressViewOffset(true, 0, UIUtils.dip2px(getActivity(), 48));
         mListView = (ListView) rootView.findViewById(R.id.listview);
 
-        LocalBroadcastManager.getInstance(getActivity())
-                .registerReceiver(refreshDevicesReceiver,
-                        new IntentFilter(ActionConstants.ACTON_REFRESH_DEVICES));
+//        LocalBroadcastManager.getInstance(getActivity())
+//                .registerReceiver(refreshDevicesReceiver,
+//                        new IntentFilter(ActionConstants.ACTON_REFRESH_DEVICES));
         refreshDevices(true);
 //		UpdateConfig.setDebug(true);
-        UmengUpdateAgent.forceUpdate(getActivity());
+//        UmengUpdateAgent.forceUpdate(getActivity());
     }
 
     @Override
@@ -108,42 +110,64 @@ public class MyDevicesListFragment extends Fragment implements View.OnClickListe
 
     public void unbindingDevice(final int position, String identifier) {
         DevicesApi.deviceUnbinding(getActivity(),
-        UserState.getInstances(getActivity()).getAccessToken(""),
-        identifier,
-        new WrapperBaseJsonHttpResponseHandler<BaseResponse>(getActivity()) {
+                UserState.getInstances(getActivity()).getAccessToken(""),
+                identifier,
+                new WrapperBaseJsonHttpResponseHandler<BaseResponse>(getActivity()) {
 
-            @Override
-            public void onStart() {
-                CommonUtils.showingProgressDialog();
-            }
+                    @Override
+                    public void onStart() {
+                        CommonUtils.showingProgressDialog();
+                    }
 
-            @Override
-            protected BaseResponse parseResponse2(String rawJsonData,
-                                                  boolean isFailure) throws Throwable {
-                LogUtils.d("MainActivity", "rawJsonData: " + rawJsonData);
-                if (!isFailure && !TextUtils.isEmpty(rawJsonData)) {
-                    return GsonUtils.getInstance().getGson().fromJson(rawJsonData, BaseResponse.class);
-                }
-                return null;
-            }
+                    @Override
+                    protected BaseResponse parseResponse2(String rawJsonData,
+                                                          boolean isFailure) throws Throwable {
+                        LogUtils.d("MainActivity", "rawJsonData: " + rawJsonData);
+                        if (!isFailure && !TextUtils.isEmpty(rawJsonData)) {
+                            return GsonUtils.getInstance().getGson().fromJson(rawJsonData, BaseResponse.class);
+                        }
+                        return null;
+                    }
 
-            @Override
-            public void onSuccess(int statusCode, Header[] headers,
-                                  String rawJsonData, BaseResponse response) {
-                if (response.isSuccess()) {
-                    CommonUtils.ToastMsg(getActivity(), R.string.unbinding_success);
-                    mAdapter.removeAtPosition(position);
-                    refreshDevices(false);
-                } else {
-                    super.onSuccess(statusCode, headers, rawJsonData, response);
-                }
-            }
+//            @Override
+//            public void onSuccess(int statusCode, Header[] headers,
+//                                  String rawJsonData, BaseResponse response) {
+//                if (response.isSuccess()) {
+//                    CommonUtils.ToastMsg(getActivity(), R.string.unbinding_success);
+//                    mAdapter.removeAtPosition(position);
+//                    refreshDevices(false);
+//                } else {
+//                    super.onSuccess(statusCode, headers, rawJsonData, response);
+//                }
+//            }
 
-            @Override
-            public void onFinish() {
-                CommonUtils.dismissDialog();
-            }
-        });
+                    @Override
+                    public void onFinish() {
+                        CommonUtils.dismissDialog();
+                    }
+
+                    @Override
+                    public void onFailure(int arg0,
+                                          Header[] arg1,
+                                          Throwable arg2, String arg3, BaseResponse arg4) {
+                        // TODO Auto-generated method stub
+
+                    }
+
+                    @Override
+                    public void onSuccess(int statusCode,
+                                          Header[] headers, String rawJsonData,
+                                          BaseResponse response) {
+                        // TODO Auto-generated method stub
+                        if (response.isSuccess()) {
+                            CommonUtils.ToastMsg(getActivity(), R.string.unbinding_success);
+                            mAdapter.removeAtPosition(position);
+                            refreshDevices(false);
+                        } else {
+                            super.onSuccess(statusCode, headers, rawJsonData, response);
+                        }
+                    }
+                });
     }
 
     public void refreshDevices(final boolean showLoadingView) {
@@ -151,66 +175,107 @@ public class MyDevicesListFragment extends Fragment implements View.OnClickListe
             mSwipeRefreshLayout.setRefreshing(true);
         }
         mDevicesHashMap = DBManager.getInstances(getActivity()).queryDeviceInfo();
-        DevicesApi.deviceList(getActivity(), UserState.getInstances(getActivity()).getAccessToken(""),
-        new BaseJsonHttpResponseHandler<DevicesResponse>() {
+        refreshDeviceList();
+//        DevicesApi.deviceList(getActivity(), UserState.getInstances(getActivity()).getAccessToken(""),
+//        new BaseJsonHttpResponseHandler<DevicesResponse>() {
+//
+//
+//            @Override
+//            public void onFinish() {
+//                mSwipeRefreshLayout.setRefreshing(false);
+//            }
+//
+//            @Override
+//            protected DevicesResponse parseResponse(String rawJsonData,
+//                                                    boolean isFailure) throws Throwable {
+//                LogUtils.e("rawJsonData:" + rawJsonData);
+//                if (isFailure || TextUtils.isEmpty(rawJsonData)) {
+//                    LogUtils.d("UserApi.deviceList->parseResponse: rawJsonData->" + rawJsonData);
+//                    return null;
+//                }
+//                return GsonUtils.getInstance().getGson().fromJson(rawJsonData, DevicesResponse.class);
+//            }
+//
+//			@Override
+//			public void onFailure(int statusCode,
+//					Header[] arg1,
+//					Throwable throwable, String arg3, DevicesResponse arg4) {
+//				// TODO Auto-generated method stub
+//				LogUtils.e("end refresh devices http request with error", throwable);
+//                LogUtils.e("statusCode: " + statusCode);
+//                if (showLoadingView) {
+//                    if (!NetworkUtil.isNetworkAvailable(getActivity()) || statusCode == 0) {
+//                        CommonUtils.ToastMsg(getActivity(), getString(R.string.http_error_message));
+//                    } else {
+//                        if (statusCode >= 500) {
+//                            CommonUtils.ToastMsg(getActivity(), getString(R.string.http_server_error));
+//                        } else {
+//                            if (throwable != null) {
+//                                CommonUtils.ToastMsg(getActivity(), throwable.getMessage());
+//                            }
+//                        }
+//                    }
+//                }
+//			}
+//
+//			@Override
+//			public void onSuccess(int arg0,
+//					Header[] arg1, String arg2,
+//					DevicesResponse response) {
+//				// TODO Auto-generated method stub
+//				if (response != null && getActivity() != null) {
+//                    if (response.isSuccess()) {
+//                        updateDevices(response.data);
+//                        Collections.sort(response.data, new DeviceComparator());
+//                        if (mAdapter == null) {
+//                            mAdapter = new DeviceAdapter(getActivity(), response.data);
+//                            mListView.setAdapter(mAdapter);
+//                        } else {
+//                            mAdapter.updateDataSet(response.data);
+//                        }
+//                    } else {
+//                        int code = response.code;
+//                        CommonUtils.ToastMsg(getActivity(), ErrorCodeHelper.getInstances(getActivity()).getErrorMessage(code));
+//                        BusinessUtils.checkTokenAvailable(getActivity(), code);
+//                    }
+//                }
+//			}
+//        });
+    }
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers,
-                                  Throwable throwable, String rawJsonResponse, DevicesResponse response) {
-                LogUtils.e("end refresh devices http request with error", throwable);
-                LogUtils.e("statusCode: " + statusCode);
-                if (showLoadingView) {
-                    if (!NetworkUtil.isNetworkAvailable(getActivity()) || statusCode == 0) {
-                        CommonUtils.ToastMsg(getActivity(), getString(R.string.http_error_message));
-                    } else {
-                        if (statusCode >= 500) {
-                            CommonUtils.ToastMsg(getActivity(), getString(R.string.http_server_error));
-                        } else {
-                            if (throwable != null) {
-                                CommonUtils.ToastMsg(getActivity(), throwable.getMessage());
-                            }
-                        }
-                    }
+    /**
+     * gile　add 刷新设备 
+     */
+    private void refreshDeviceList(){
+        Device device  = new Device();
+//    	device.icon ="http://image.cn.made-in-china.com/2f0j01UCotRTyEJecj/USB%E6%99%BA%E8%83%BD%E5%85%85%E7%94%B5%E6%8F%92%E5%BA%A7.jpg";
+        device.app = "http://120.24.46.148:8000/";
+        device.identifier = "0-8-18fe34d2c162";
+        device.is_owner = true;
+        device.name = "one";
+        device.status = "online";
+        DevicesResponse response = new DevicesResponse();
+        response.code = 0;
+        response.message = "获取成功";
+        List<Device> devices = new ArrayList<>();
+        devices.add(device);
+        response.data = devices;
+        if (response != null && getActivity() != null) {
+            if (response.isSuccess()) {
+                updateDevices(response.data);
+                Collections.sort(response.data, new DeviceComparator());
+                if (mAdapter == null) {
+                    mAdapter = new DeviceAdapter(getActivity(), response.data);
+                    mListView.setAdapter(mAdapter);
+                } else {
+                    mAdapter.updateDataSet(response.data);
                 }
+            } else {
+                int code = response.code;
+                CommonUtils.ToastMsg(getActivity(), ErrorCodeHelper.getInstances(getActivity()).getErrorMessage(code));
+                BusinessUtils.checkTokenAvailable(getActivity(), code);
             }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String rawJsonData,
-                                  DevicesResponse response) {
-                if (response != null && getActivity() != null) {
-                    if (response.isSuccess()) {
-                        updateDevices(response.data);
-                        Collections.sort(response.data, new DeviceComparator());
-                        if (mAdapter == null) {
-                            mAdapter = new DeviceAdapter(getActivity(), response.data);
-                            mListView.setAdapter(mAdapter);
-                        } else {
-                            mAdapter.updateDataSet(response.data);
-                        }
-                    } else {
-                        int code = response.code;
-                        CommonUtils.ToastMsg(getActivity(), ErrorCodeHelper.getInstances(getActivity()).getErrorMessage(code));
-                        BusinessUtils.checkTokenAvailable(getActivity(), code);
-                    }
-                }
-            }
-
-            @Override
-            public void onFinish() {
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
-
-            @Override
-            protected DevicesResponse parseResponse(String rawJsonData,
-                                                    boolean isFailure) throws Throwable {
-                LogUtils.e("rawJsonData:" + rawJsonData);
-                if (isFailure || TextUtils.isEmpty(rawJsonData)) {
-                    LogUtils.d("UserApi.deviceList->parseResponse: rawJsonData->" + rawJsonData);
-                    return null;
-                }
-                return GsonUtils.getInstance().getGson().fromJson(rawJsonData, DevicesResponse.class);
-            }
-        });
+        }
     }
 
     public void updateDevices(List<Device> devices) {
@@ -330,7 +395,7 @@ public class MyDevicesListFragment extends Fragment implements View.OnClickListe
             }
 
 
-            imageView.setVisibility(View.GONE);
+            imageView.setVisibility(View.VISIBLE);
             if (device.isOnline()) {
                 textView.setTextColor(getResources().getColor(android.R.color.black));
                 if (!TextUtils.isEmpty(device.name)) {
@@ -390,6 +455,8 @@ public class MyDevicesListFragment extends Fragment implements View.OnClickListe
             bundle.putString("name", device.name);
             bundle.putString("app", device.app);
             ActivityUtils.start(getActivity(), DeviceControlActivity.class, bundle, R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+            // gile add
+//            ActivityUtils.start(getActivity(), TestDeviceActivity.class, bundle, R.anim.slide_in_from_right, R.anim.slide_out_to_left);
         }
     }
 
@@ -503,38 +570,60 @@ public class MyDevicesListFragment extends Fragment implements View.OnClickListe
 
     public void deleteDevice(final int position, Device device) {
         DevicesApi.deviceDelete(getActivity(), UserState.getInstances(getActivity()).getAccessToken(""),
-        device.identifier,
-        new WrapperBaseJsonHttpResponseHandler<BaseResponse>(getActivity()) {
+                device.identifier,
+                new WrapperBaseJsonHttpResponseHandler<BaseResponse>(getActivity()) {
 
-            @Override
-            public void onStart() {
-                CommonUtils.showingProgressDialog();
-            }
+                    @Override
+                    public void onStart() {
+                        CommonUtils.showingProgressDialog();
+                    }
 
-            @Override
-            protected BaseResponse parseResponse2(String rawJsonData, boolean isFailure) throws Throwable {
-                if (isFailure || TextUtils.isEmpty(rawJsonData)) {
-                    return null;
-                }
-                return GsonUtils.getInstance().getGson().fromJson(rawJsonData, BaseResponse.class);
-            }
+                    @Override
+                    protected BaseResponse parseResponse2(String rawJsonData, boolean isFailure) throws Throwable {
+                        if (isFailure || TextUtils.isEmpty(rawJsonData)) {
+                            return null;
+                        }
+                        return GsonUtils.getInstance().getGson().fromJson(rawJsonData, BaseResponse.class);
+                    }
 
-            @Override
-            public void onSuccess(int statusCode, Header[] headers,
-                                  String rawJsonData, BaseResponse response) {
-                if (response.isSuccess()) {
-                    CommonUtils.ToastMsg(getActivity(), R.string.device_delete_success);
-                    mAdapter.removeAtPosition(position);
-                    refreshDevices(false);
-                } else {
-                    super.onSuccess(statusCode, headers, rawJsonData, response);
-                }
-            }
+//            @Override
+//            public void onSuccess(int statusCode, Header[] headers,
+//                                  String rawJsonData, BaseResponse response) {
+//                if (response.isSuccess()) {
+//                    CommonUtils.ToastMsg(getActivity(), R.string.device_delete_success);
+//                    mAdapter.removeAtPosition(position);
+//                    refreshDevices(false);
+//                } else {
+//                    super.onSuccess(statusCode, headers, rawJsonData, response);
+//                }
+//            }
 
-            @Override
-            public void onFinish() {
-                CommonUtils.showingProgressDialog();
-            }
-        });
+                    @Override
+                    public void onFinish() {
+                        CommonUtils.showingProgressDialog();
+                    }
+
+                    @Override
+                    public void onFailure(int arg0,
+                                          Header[] arg1,
+                                          Throwable arg2, String arg3, BaseResponse arg4) {
+                        // TODO Auto-generated method stub
+
+                    }
+
+                    @Override
+                    public void onSuccess(int statusCode,
+                                          Header[] headers, String rawJsonData,
+                                          BaseResponse response) {
+                        // TODO Auto-generated method stub
+                        if (response.isSuccess()) {
+                            CommonUtils.ToastMsg(getActivity(), R.string.device_delete_success);
+                            mAdapter.removeAtPosition(position);
+                            refreshDevices(false);
+                        } else {
+                            super.onSuccess(statusCode, headers, rawJsonData, response);
+                        }
+                    }
+                });
     }
 }
